@@ -1,0 +1,125 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col mb-2">
+        <span class="mb-0 page-title">{{'CRON_JOB_LOGS' | translate}}
+          <app-page-help-text code="CRON_JOB_LOGS"></app-page-help-text>
+        </span>
+      </div>
+      <div class="col-auto">
+        <ul class="breadcrumb-list">
+          <li class="breadcrumb-item bcrumb-1">
+            <button *hasClaim="'CRON_JOB_LOG_SET_RETENTION_PERIOD'" (click)="manageLogsRetention()"
+              class="btn btn-primary btn-sm">
+              <i-feather name="settings" class="small-icon me-1"></i-feather>
+              <span class="d-none d-sm-inline"> {{'SETTINGS' | translate}}</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="body">
+        <div class="table-responsive">
+          <div class="grid-height-large">
+            <table mat-table matSortDisableClear [dataSource]="dataSource" matSort matSortActive="startedAt"
+              matSortDirection="asc">
+              <ng-container matColumnDef="startedAt">
+                <th class="table-column-190" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'STARTED_AT'| translate}}
+                </th>
+                <td class="table-column-190" mat-cell *matCellDef="let log">
+                  {{log?.startedAt | utcToLocalTime:'short'}} </td>
+              </ng-container>
+              <ng-container matColumnDef="executionTime">
+                <th class="table-column-150" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'EXECUTION_TIME' | translate}} </th>
+                <td class="table-column-150" mat-cell *matCellDef="let log">
+                  {{log.executionTime == 0 ? '1' : log.executionTime}}
+                  seconds </td>
+              </ng-container>
+              <ng-container matColumnDef="endedAt">
+                <th class="table-column-190" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'ENDED_AT' | translate}} </th>
+                <td class="table-column-190" mat-cell *matCellDef="let log"> {{log.endedAt |
+                  utcToLocalTime:'short'}} </td>
+              </ng-container>
+              <ng-container matColumnDef="jobName">
+                <th class="table-column-150" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'JOB_NAME' | translate}}
+                </th>
+                <td class="table-column-150" mat-cell *matCellDef="let log"> {{log.jobName}} </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th class="table-column-150" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'STATUS'| translate}}
+                </th>
+                <td class="table-column-150" mat-cell *matCellDef="let log">
+                  <span *ngIf="log?.status.toLocaleLowerCase() =='success'" class="badge bg-success">{{'SUCCESS' |
+                    translate}}</span>
+                  <span *ngIf="log?.status.toLocaleLowerCase() =='failed'" class="badge bg-danger">
+                    {{'FAILED' | translate}}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="output">
+                <th class="table-column-150" mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'ERROR' | translate}}
+                </th>
+                <td class="table-column-150" mat-cell *matCellDef="let log"> {{log.output}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="startedAt-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef> </th>
+              </ng-container>
+
+              <ng-container matColumnDef="executionTime-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef> </th>
+              </ng-container>
+
+              <ng-container matColumnDef="endedAt-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef> </th>
+              </ng-container>
+
+              <ng-container matColumnDef="jobName-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="JobNameFilter">
+                </th>
+              </ng-container>
+
+              <ng-container matColumnDef="status-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef> </th>
+              </ng-container>
+
+              <ng-container matColumnDef="output-search" sticky>
+                <th class="table-column-50" class="pr-5" mat-header-cell *matHeaderCellDef>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="OutputFilter">
+                </th>
+              </ng-container>
+
+              <ng-container matColumnDef="footer">
+                <td mat-footer-cell colspan="6" *matFooterCellDef>
+                  <mat-paginator [length]="cronJobLogResource.totalCount" [pageSize]="cronJobLogResource.pageSize"
+                    [pageSizeOptions]="[10, 20, 30]">
+                  </mat-paginator>
+                </td>
+              </ng-container>
+              <tr *matNoDataRow>
+                <td colspan="9">
+                  <span class="p-4 mt-4">
+                    <b> {{'NO_DATA_FOUND' | translate}}</b>
+                  </span>
+                </td>
+              </tr>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-header-row *matHeaderRowDef="displayedSearchColumns;sticky: true"
+                class="example-second-header-row"> </tr>
+              <tr mat-footer-row *matFooterRowDef="footerToDisplayed"></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

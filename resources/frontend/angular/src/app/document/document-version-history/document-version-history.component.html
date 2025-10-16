@@ -1,0 +1,103 @@
+<div class="d-flex">
+  <span mat-dialog-title class="dialog-title">
+    {{data.name }}'s {{'VERSION_HISTORY' | translate}}
+    <app-page-help-text [code]="'VERSION_HISTORY'"></app-page-help-text>
+  </span>
+  <button mat-icon-button class="close-button ms-auto" (click)="closeDialog()">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+  </button>
+</div>
+<div mat-dialog-content>
+  <div *hasClaim="['ALL_DOCUMENTS_UPLOAD_NEW_VERSION','ASSIGNED_DOCUMENTS_UPLOAD_NEW_VERSION']" class="mb-5">
+    <form [formGroup]="documentForm">
+      <div class="col-md-12">
+        <label>{{ "DOCUMENT_UPLOAD" | translate }}</label>
+        <input class="form-control" #file (change)="upload(file.files)" type="file" />
+        <div class="text-danger"
+          *ngIf="documentForm.get('url').touched  && documentForm.get('url').errors?.['required']">
+          {{ "DOCUMENT_IS_REQUIRED" | translate }}
+        </div>
+        <div *ngIf="
+          (documentForm.get('extension').touched ||
+            documentForm.get('extension').dirty) &&
+          documentForm.get('extension').errors &&  !documentForm.get('url').errors?.['required']
+        ">
+          <div class="text-danger" *ngIf="documentForm.get('extension').errors?.['required']">
+            {{ "DOCUMENT_TYPE_IS_NOT_ALLOWED" | translate }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <mat-progress-bar *ngIf="showProgress" mode="determinate" [value]="progress"></mat-progress-bar>
+      </div>
+      <div class="m-t-10 col-md-12 m-b-2">
+        <button class="btn btn-success btn-sm m-r-10" (click)="SaveDocument()" cdkFocusInitial>
+          <i-feather name="save" class="small-icon"></i-feather>
+          {{ "SAVE" | translate }}
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" (click)="closeDialog()">
+          <i-feather name="x-circle" class="small-icon"></i-feather>
+          {{ "CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <table class="table table-striped table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th>
+          {{'CREATED_DATE' | translate}}
+        </th>
+        <th>
+          {{'ADDED_BY' | translate}}
+        </th>
+        <th>
+          {{'SIGNED_BY' | translate}}
+        </th>
+        <th>
+          {{'SIGN_DATE' | translate}}
+        </th>
+        <th>
+          {{'ACTION' | translate}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let version of data.documentVersions">
+        <td>{{version.modifiedDate | utcToLocalTime:'short'}}</td>
+        <td>
+          {{version.createdByUser}}
+        </td>
+        <td>
+          <span *ngIf="version.signedByUser">
+            <span class="bg-success text-light">
+              <i-feather name="check" class="small-icon"></i-feather></span>
+            {{version.signedByUser}}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="version.signDate">
+            {{version.signDate | utcToLocalTime:'short'}}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="version.isCurrentVersion" class="badge bg-success">{{'CURRENT_VERSION' | translate}}</span>
+          <div *ngIf="!version.isCurrentVersion">
+            <span (click)="onDocumentView(version)" class="material-icons-outlined m-r-5 text-primary" matTooltip="view"
+              role="button">
+              <mat-icon> visibility</mat-icon>
+            </span>
+            <span (click)="downloadDocument(version)" *ngIf="isDownloadFlag" role="button" class="m-r-5 text-primary">
+              <mat-icon> download</mat-icon>
+            </span>
+            <span (click)="restoreDocumentVersion(version)" role="button"
+              *hasClaim="['ALL_DOCUMENTS_RESTORE_VERSION','ASSIGNED_DOCUMENTS_RESTORE_VERSION']"
+              matTooltip="Restore to Current Version" class="material-icons-outlined text-primary">
+              <mat-icon> restore</mat-icon>
+            </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

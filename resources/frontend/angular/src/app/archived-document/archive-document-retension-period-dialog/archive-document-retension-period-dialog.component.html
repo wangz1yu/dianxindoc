@@ -1,0 +1,23 @@
+<div class="d-flex">
+    <span mat-dialog-title class="dialog-title">{{'ARCHIVE_DOCUMENT_RETENTION_PERIOD' | translate}}
+        <app-page-help-text [code]="'ARCHIVE_DOCUMENT_RETENTION_PERIOD'"></app-page-help-text></span>
+    <button mat-icon-button class="close-button ms-auto" (click)="closeDialog()">
+        <mat-icon class="close-icon" color="warn">close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content>
+    <div class="col-md-8">
+        <label class="form-label">{{'RETENTION_PERIOD' | translate}}  ({{'DAY' | translate}})</label>
+        <input [(ngModel)]="retentionPeriod" class="form-control" type="number" min="1" />
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <button class="btn btn-success btn-sm m-r-10" (click)="saveArchiveSettings()">
+                <i-feather name="save" class="small-icon"></i-feather>
+                {{'SAVE' | translate}}</button>
+            <button class="btn btn-danger btn-sm" (click)="closeDialog()">
+                <i-feather name="x-circle" class="small-icon"></i-feather>
+                {{'CANCEL' | translate}}</button>
+        </div>
+    </div>
+</mat-dialog-content>

@@ -1,0 +1,166 @@
+<div class="d-flex">
+  <h2 mat-dialog-title class="dialog-title"> {{ "AI_DOCUMENTS" | translate }}
+  </h2>
+  <button mat-icon-button class="ms-auto" (click)="onCancel()">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content class="pt-0">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <ckeditor class="ckeditor-class" [editor]="editor" [disabled]="true" [(ngModel)]="parseData"></ckeditor>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group ">
+              <label> {{'PROMPT_INPUT' | translate }} </label>
+              <textarea [value]="data?.prompt" class="form-control form-control-sm" rows="3" disabled></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group ">
+              <label> {{'SELECT_MODEL' | translate }} </label>
+              <mat-select panelClass="mat-select-control" class="form-control" [value]="data?.model" disabled>
+                <ng-container *ngFor="let provider of providers">
+                  <mat-optgroup [label]="provider">
+                    <mat-option *ngFor="let groupModel of groupedModels[provider]" [value]="groupModel.id">
+                      {{ groupModel.label }} — {{ groupModel.description }}
+                    </mat-option>
+                  </mat-optgroup>
+                </ng-container>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label> {{'AI_LANGUAGE' | translate }} </label>
+              <mat-select panelClass="mat-select-control" class="form-control" [value]="data?.language" disabled
+                placeholder=" {{ 'SELECT_LANGUAGE' | translate }}">
+                <mat-option value="az-AZ">Azerbaijani (Azerbaijan)</mat-option>
+                <mat-option value="ar-AE">Arabic</mat-option>
+                <mat-option value="cmn-CN">Chinese (Mandarin)</mat-option>
+                <mat-option value="hr-HR">Croatian (Croatia)</mat-option>
+                <mat-option value="cs-CZ">Czech (Czech Republic)</mat-option>
+                <mat-option value="da-DK">Danish (Denmark)</mat-option>
+                <mat-option value="nl-NL">Dutch (Netherlands)</mat-option>
+                <mat-option value="en-US">English (USA)</mat-option>
+                <mat-option value="en-GB">English (UK)</mat-option>
+                <mat-option value="et-EE">Estonian (Estonia)</mat-option>
+                <mat-option value="fi-FI">Finnish (Finland)</mat-option>
+                <mat-option value="fr-FR">French (France)</mat-option>
+                <mat-option value="de-DE">German (Germany)</mat-option>
+                <mat-option value="el-GR">Greek (Greece)</mat-option>
+                <mat-option value="he-IL">Hebrew (Israel)</mat-option>
+                <mat-option value="hi-IN">Hindi (India)</mat-option>
+                <mat-option value="hu-HU">Hungarian (Hungary)</mat-option>
+                <mat-option value="is-IS">Icelandic (Iceland)</mat-option>
+                <mat-option value="id-ID">Indonesian (Indonesia)</mat-option>
+                <mat-option value="it-IT">Italian (Italy)</mat-option>
+                <mat-option value="ja-JP">Japanese (Japan)</mat-option>
+                <mat-option value="kk-KZ">Kazakh (Kazakhistan)</mat-option>
+                <mat-option value="ko-KR">Korean (South Korea)</mat-option>
+                <mat-option value="lt-LT">Lithuanian (Lithuania)</mat-option>
+                <mat-option value="ms-MY">Malay (Malaysia)</mat-option>
+                <mat-option value="nb-NO">Norwegian (Norway)</mat-option>
+                <mat-option value="fa_IR">Persian</mat-option>
+                <mat-option value="pl-PL">Polish (Poland)</mat-option>
+                <mat-option value="pt-BR">Portuguese (Brazil)</mat-option>
+                <mat-option value="pt-PT">Portuguese (Portugal)</mat-option>
+                <mat-option value="ro-RO">Romanian (Romania)</mat-option>
+                <mat-option value="ru-RU">Russian (Russia)</mat-option>
+                <mat-option value="sk-SK">Slovak (Slovakia)</mat-option>
+                <mat-option value="sl-SI">Slovenian (Slovenia)</mat-option>
+                <mat-option value="es-ES">Spanish (Spain)</mat-option>
+                <mat-option value="es-MX">Spanish (Mexico)</mat-option>
+                <mat-option value="sw-KE">Swahili (Kenya)</mat-option>
+                <mat-option value="sv-SE">Swedish (Sweden)</mat-option>
+                <mat-option value="tr-TR">Turkish (Turkey)</mat-option>
+                <mat-option value="th-TH">Thai (Thailand)</mat-option>
+                <mat-option value="vi-VN">Vietnamese (Vietnam)</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label> {{'MAXIMUM_LENGTH' | translate }} </label>
+              <input [value]="data?.maximumLength" class="form-control form-control-sm" type="number" disabled>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label> {{'CREATIVITY' | translate }} </label>
+            <mat-select panelClass="mat-select-control" class="form-control" [value]="data?.creativity" disabled
+              placeholder="{{ 'CREATIVITY' | translate }}">
+              <mat-option value="0.25">
+                Economic
+              </mat-option>
+              <mat-option value="0.5">
+                Average
+              </mat-option>
+              <mat-option value="0.75">
+                Good
+              </mat-option>
+              <mat-option value="1">
+                Premium
+              </mat-option>
+            </mat-select>
+          </div>
+          <div class="col-sm-6">
+            <label> {{'TONE_OF_VOICE' | translate }} </label>
+            <mat-select panelClass="mat-select-control" class="form-control" [value]="data?.toneOfVoice" disabled
+              placeholder="{{ 'TONE_OF_VOICE' | translate }}">
+              <mat-option value="Professional" selected="">
+                Professional
+              </mat-option>
+              <mat-option value="Funny">
+                Funny
+              </mat-option>
+              <mat-option value="Casual">
+                Casual
+              </mat-option>
+              <mat-option value="Excited">
+                Excited
+              </mat-option>
+              <mat-option value="Witty">
+                Witty
+              </mat-option>
+              <mat-option value="Sarcastic">
+                Sarcastic
+              </mat-option>
+              <mat-option value="Feminine">
+                Feminine
+              </mat-option>
+              <mat-option value="Masculine">
+                Masculine
+              </mat-option>
+              <mat-option value="Bold">
+                Bold
+              </mat-option>
+              <mat-option value="Dramatic">
+                Dramatic
+              </mat-option>
+              <mat-option value="Grumpy">
+                Grumpy
+              </mat-option>
+              <mat-option value="Secretive">
+                Secretive
+              </mat-option>
+              <mat-option value="other">
+                other
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

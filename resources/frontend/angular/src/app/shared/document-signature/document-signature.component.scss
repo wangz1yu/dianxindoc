@@ -1,0 +1,48 @@
+.signature-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  canvas {
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+
+  .controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+
+  }
+}
+
+
+.previous-signature {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .signature-img {
+    width: 200px;
+    height: 55px;
+    margin-right: 1rem;
+    border: 1px solid #ddd;
+  }
+
+  .signature-details {
+    p {
+      margin: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .signature-container {
+    canvas {
+      max-width: 90vw;
+    }
+  }
+
+
+}

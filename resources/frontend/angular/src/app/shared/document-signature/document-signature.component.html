@@ -1,0 +1,67 @@
+<div class="d-flex">
+    <span mat-dialog-title class="dialog-title">
+        {{ "DOCUMENT_SIGNATURE" | translate }}
+        <app-page-help-text [code]="'DOCUMENT_SIGNATURE'"></app-page-help-text>
+    </span>
+    <button mat-icon-button class="ms-auto" (click)="closeDialog()">
+        <i-feather class="close-icon text-danger" name="x"></i-feather>
+    </button>
+</div>
+<mat-dialog-content>
+    <div class="row">
+        <label for="signature"> {{ "ADD_YOUR_SIGNATURE" | translate }}</label>
+        <div class="col-md-12">
+            <div class="signature-container">
+                <canvas #canvas></canvas>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button type="button" class="float-end btn btn-danger btn-sm mt-1" (click)="clearSignature()">
+                <i-feather name="trash-2" class="small-icon"></i-feather>
+                {{ "CLEAR" | translate }}
+            </button>
+        </div>
+        <label for="or" class="text-danger d-flex justify-content-center align-items-center w-100">
+            {{ "OR" | translate }}
+        </label>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label for="signature"> {{"UPLOAD_YOUR_SIGNATURE" | translate}}</label>
+                <input type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)"
+                    class="form-control signature-upload">
+            </div>
+        </div>
+        <div class="mt-2 col-md-12">
+            <button type="button" class="btn btn-success btn-sm me-2" (click)="saveSignature()" cdkFocusInitial>
+                <i-feather name="save" class="small-icon"></i-feather>
+                {{ "SAVE" | translate }}
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="closeDialog()">
+                <i-feather name="x-circle" class="small-icon"></i-feather>
+                {{ "CANCEL" | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div class="row mb-3" *ngIf="documentSignatures.length > 0">
+                <div *ngFor="let signature of documentSignatures" class="col-md-6">
+                    <div class="previous-signature">
+                        <img [src]="'data:image/png;base64,' + signature.base64" alt="Signature"
+                            class="signature-img" />
+                        <div class="signature-details">
+                            <p>
+                                <strong>{{ "SIGNED_BY" | translate }}:</strong>
+                                {{ signature.signatureBy }}
+                            </p>
+                            <p>
+                                <strong>{{ "SIGNED_DATE" | translate }}:</strong>
+                                {{ signature.createdDate | utcToLocalTime : "full" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>

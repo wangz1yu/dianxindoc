@@ -1,0 +1,72 @@
+<div class="row">
+    <div class="col-md-12 mb-2"
+        *hasClaim="['ALL_DOCUMENTS_UPLOAD_NEW_VERSION','ASSIGNED_DOCUMENTS_UPLOAD_NEW_VERSION']">
+        <div class="float-end">
+            <button (click)="uploadNewVersion()" class="btn btn-success btn-sm m-r-10 m-t-10" type="button">
+                <i-feather name="plus" class="small-icon"></i-feather>
+                {{'UPLOAD_NEW_VERSION_FILE' | translate}}
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    {{'CREATED_DATE' | translate}}
+                </th>
+                <th>
+                    {{'ADDED_BY' | translate}}
+                </th>
+                <th>
+                    {{'SIGNED_BY' | translate}}
+                </th>
+                <th>
+                    {{'SIGN_DATE' | translate}}
+                </th>
+                <th>
+                    {{'ACTION' | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let version of documentVersions">
+                <td>{{version.modifiedDate | utcToLocalTime:'short'}}</td>
+                <td>
+                    {{version.createdByUser}}
+                </td>
+                <td>
+                    <span *ngIf="version.signedByUser">
+                        <span class="bg-success text-light">
+                            <i-feather name="check" class="small-icon"></i-feather></span>
+                        {{version.signedByUser}}
+                    </span>
+                </td>
+                <td>
+                    <span *ngIf="version.signDate">
+                        {{version.signDate | utcToLocalTime:'short'}}
+                    </span>
+                </td>
+                <td>
+                    <span *ngIf="version.isCurrentVersion" class="badge bg-success">{{'CURRENT_VERSION' |
+                        translate}}</span>
+                    <div *ngIf="!version.isCurrentVersion">
+                        <span (click)="onDocumentView(version)" class="material-icons-outlined m-r-5 text-primary"
+                            matTooltip="view" role="button">
+                            <mat-icon> visibility</mat-icon>
+                        </span>
+                        <span (click)="downloadDocument(version)" role="button" class="m-r-5 text-primary">
+                            <mat-icon> download</mat-icon>
+                        </span>
+                        <span (click)="restoreDocumentVersion(version)" role="button"
+                            *hasClaim="['ALL_DOCUMENTS_RESTORE_VERSION','ASSIGNED_DOCUMENTS_RESTORE_VERSION']"
+                            matTooltip="Restore to Current Version" class="material-icons-outlined text-primary">
+                            <mat-icon> restore</mat-icon>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
