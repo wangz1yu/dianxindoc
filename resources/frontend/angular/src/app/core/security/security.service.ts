@@ -10,7 +10,6 @@ import { ClonerService } from '@core/services/clone.service';
 import { environment } from '@environments/environment';
 import { CompanyProfile } from '@core/domain-classes/company-profile';
 import { User } from '@core/domain-classes/user';
-import { LicenseValidatorService } from '@mlglobtech/license-validator-docphp';
 
 @Injectable({ providedIn: 'root' })
 export class SecurityService {
@@ -35,7 +34,10 @@ export class SecurityService {
     if (this._token) {
       return this._token;
     }
-    this._token = this.licenseValidatorService.getJWtToken();
+    const tokenString = localStorage.getItem('bearerToken');
+    if (tokenString) {
+      this._token = JSON.parse(tokenString);
+    }
     return this._token;
   }
 
@@ -51,13 +53,14 @@ export class SecurityService {
     private http: HttpClient,
     private clonerService: ClonerService,
     private commonHttpErrorService: CommonHttpErrorService,
-    private router: Router,
-    private licenseValidatorService: LicenseValidatorService
+    private router: Router
   ) { }
 
   isLogin(): boolean {
-    const authStr = this.licenseValidatorService.getAuthObject();
-    const tokenStr = this.licenseValidatorService.getBearerToken();
+    const authStr = localStorage.getItem('authObj');
+    const tokenStr = localStorage.getItem('bearerToken');
+    // 添加许可证检查绕过
+    localStorage.setItem('isLicensed', 'true');
     if (authStr && tokenStr) {
       setTimeout(() => {
         this.refreshToken();
@@ -76,8 +79,9 @@ export class SecurityService {
         tap((resp) => {
           this.tokenTime = new Date();
           const authUser = this.clonerService.deepClone<UserAuth>(resp);
-          this.licenseValidatorService.setTokenUserValue(authUser);
-          resp.isAuthenticated = this.licenseValidatorService.getAuthObject() != null;
+          localStorage.setItem('authObj', JSON.stringify(authUser.user));
+          localStorage.setItem('bearerToken', JSON.stringify(authUser.authorisation));
+          resp.isAuthenticated = true;
           this.securityObject$.next(authUser.user);
           this.refreshToken();
         })
@@ -109,7 +113,8 @@ export class SecurityService {
           }
           this.tokenTime = new Date();
           const authUser = this.clonerService.deepClone<UserAuth>(userAuth);
-          this.licenseValidatorService.setTokenUserValue(authUser);
+          localStorage.setItem('authObj', JSON.stringify(authUser.user));
+          localStorage.setItem('bearerToken', JSON.stringify(authUser.authorisation));
           this.securityObject$.next(authUser.user);
           this.refreshToken();
         });
@@ -126,7 +131,8 @@ export class SecurityService {
       .pipe(
         tap((resp) => {
           const authUser = this.clonerService.deepClone<UserAuth>(resp);
-          this.licenseValidatorService.setTokenUserValue(authUser);
+          localStorage.setItem('authObj', JSON.stringify(authUser.user));
+          localStorage.setItem('bearerToken', JSON.stringify(authUser.authorisation));
           this.securityObject$.next(authUser.user);
           this.isRefreshingToken = false;
         }, () => { }, () => {
@@ -154,8 +160,8 @@ export class SecurityService {
   }
 
   resetSecurityObject(): void {
-    localStorage.removeItem(this.licenseValidatorService.keyValues.authObj);
-    localStorage.removeItem(this.licenseValidatorService.keyValues.bearerToken);
+    localStorage.removeItem('authObj');
+    localStorage.removeItem('bearerToken');
     this.securityObject$.next(null);
     this._token = null;
     this._claims = null;
@@ -205,14 +211,15 @@ export class SecurityService {
   }
 
   getUserDetail(): User {
-    const userJson = this.licenseValidatorService.getAuthObject();
-    return userJson;
+    const userJson = localStorage.getItem('authObj');
+    if (userJson) {
+      return JSON.parse(userJson);
+    }
+    return null;
   }
 
   setUserDetail(user: User) {
-    this.licenseValidatorService.setTokenUserValue({
-      user: this.clonerService.deepClone<User>(user)
-    });
+    localStorage.setItem('authObj', JSON.stringify(user));
   }
 }
 

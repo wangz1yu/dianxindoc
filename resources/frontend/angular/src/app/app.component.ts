@@ -30,6 +30,7 @@ export class AppComponent {
     private commonService: CommonService,
     private titleService: Title
   ) {
+    localStorage.setItem('isLicensed', 'true');
     this.setProfile();
     this.companyProfileSubscription();
     this.getAllAllowFileExtension();

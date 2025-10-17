@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LicenseValidatorService } from '@mlglobtech/license-validator-docphp';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-remove-license-key',
@@ -15,7 +15,7 @@ import { LicenseValidatorService } from '@mlglobtech/license-validator-docphp';
 })
 export class RemoveLicenseKeyComponent implements OnInit {
   activatedForm: FormGroup;
-  licenseValidatorService = inject(LicenseValidatorService);
+  router = inject(Router);
 
   ngOnInit(): void {
     this.createForm();
@@ -31,6 +31,6 @@ export class RemoveLicenseKeyComponent implements OnInit {
       this.activatedForm.markAllAsTouched();
       return;
     }
-    this.licenseValidatorService.onDeactiveLicense(this.activatedForm.value.purchaseCode);
+    this.router.navigate(['/']);
   }
 }

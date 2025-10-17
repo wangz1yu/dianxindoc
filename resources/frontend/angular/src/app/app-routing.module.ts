@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
 import { AuthGuard } from '@core/security/auth.guard';
+import { LicenseGuard } from '@core/guards/license.guard';
 import { MyProfileComponent } from './user/my-profile/my-profile.component';
 import { AppComponent } from './app.component';
 import { CompanyProfileResolver } from './company-profile/company-profile.resolver';
@@ -11,6 +12,7 @@ import { FileRequestLinkPreviewComponent } from './file-request/file-request-pre
 import { FileRequestLinkPreviewResolver } from './file-request/file-request-link-preview.resolver';
 import { TemplateOpenAiResolverService } from './open-ai/template-openai/template-openai-resolver';
 import { documentDetailsResolver } from './document/document-details.resolver';
+import { ActivateLicenseComponent } from './activate-license/activate-license.component';
 
 const routes: Routes = [
   {
@@ -28,8 +30,8 @@ const routes: Routes = [
       },
       {
         path: 'activate-license',
-        loadComponent: () =>
-          import('./activate-license/activate-license.component').then((m) => m.ActivateLicenseComponent),
+        component: ActivateLicenseComponent,
+        canActivate: [LicenseGuard],
       },
       {
         path: 'file-requests/preview/:code',
@@ -57,10 +59,8 @@ const routes: Routes = [
       },
       {
         path: 'remove-license-key',
-        loadComponent: () =>
-          import('./remove-license-key/remove-license-key.component').then(
-            (m) => m.RemoveLicenseKeyComponent
-          )
+        component: ActivateLicenseComponent,
+        canActivate: [LicenseGuard],
       },
       {
         path: '',

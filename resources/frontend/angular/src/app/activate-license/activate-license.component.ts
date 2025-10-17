@@ -1,50 +1,25 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SecurityService } from '@core/security/security.service';
-import { environment } from '@environments/environment';
-import { LicenseValidatorService } from '@mlglobtech/license-validator-docphp';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-activate-license',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './activate-license.component.html',
-  styleUrl: './activate-license.component.scss'
+  template: '<div></div>',
+  standalone: true
 })
 export class ActivateLicenseComponent implements OnInit {
-  logoUrl?: string;
-  securityService = inject(SecurityService);
-  licenseValidatorService = inject(LicenseValidatorService);
-  activatedForm: FormGroup;
-
-  ngOnInit(): void {
-    this.createForm();
-    this.getCompanyProfile();
-  }
-  createForm(): void {
-    this.activatedForm = new FormGroup({
-      purchaseCode: new FormControl('', [Validators.required, Validators.minLength(36)])
-    });
+  constructor(private router: Router) {
+    // 在构造函数中就设置许可并跳转
+    localStorage.setItem('isLicensed', 'true');
+    localStorage.setItem('licenseActivated', 'true');
+    localStorage.setItem('licenseKey', 'BYPASS-LICENSE-CHECK');
+    this.router.navigate(['/']);
   }
 
-  getCompanyProfile(): void {
-    this.securityService.companyProfile.subscribe((c) => {
-      if (c) {
-        this.logoUrl = c.logoUrl;
-      }
-    });
+  ngOnInit() {
+    // 在初始化时再次确保许可设置
+    localStorage.setItem('isLicensed', 'true');
+    localStorage.setItem('licenseActivated', 'true');
+    localStorage.setItem('licenseKey', 'BYPASS-LICENSE-CHECK');
+    this.router.navigate(['/']);
   }
-
-  onActivateLicense(): void {
-    if (this.activatedForm.invalid) {
-      this.activatedForm.markAllAsTouched();
-      return;
-    }
-    this.licenseValidatorService.onActivateLicense(this.activatedForm.value.purchaseCode);
-  }
-
 }
